@@ -4,6 +4,12 @@ TopoToucher is a heightmap sandbox program for linux written in C++ with
 OpenGL. This was written using OpenGL, FreeGLUT, GLM, and helper libraries 
 written by [Mike Bailey](https://web.engr.oregonstate.edu/~mjb). 
 
+## Gallary
+
+<img src="readme_img/gallary1.png" width="33%">
+<img src="readme_img/gallary2.png" width="33%">
+<img src="readme_img/gallary3.png" width="33%">
+
 ## Building
 
 ### Dependencies
@@ -71,11 +77,12 @@ All keyboard controls are caps-agnostic.
 - <kbd>Projection</kbd> : Change between Orthographic and Perspective views
 - <kbd>Reset</kbd> : Reset all values including the heightmap, camera
 position, and all values above
+- <kbd>Debug</kbd> : Enables debug logging to console
 - <kbd>Quit</kbd> : Close the program. Same as <kbd>Q</kbd>
 
 ### Rolloff Functions
 
-[<img src="desmos.png">](https://www.desmos.com/calculator/wtvw4yahfq)
+[<img src="readme_img/desmos.png">](https://www.desmos.com/calculator/wtvw4yahfq)
 
 An image of the currently implemented falloff equations is shown above. You 
 can go directly to the interactive Desmos graph by clicking on the image or
@@ -83,6 +90,17 @@ can go directly to the interactive Desmos graph by clicking on the image or
 represents the radius from the currently selected vertex, and the y value
 represents the value to be added/subtracted from that vertex.
 
+### Lighting
+
+TopoToucher uses a small ambient light, and an orbiting sun lamp to show
+variation in topography. No user input is required to utlize these lights, and
+the sun orbits automatically.
+\
+\
+There is the option of enabling Depth Cue, using the right click context menu.
+Turning on Depth Cue enables some OpenGL Fog (whose parameters are defined as 
+constants at the start of the file) which darkens the scene a bit, but will
+make your angles a bit more prominent.
 
 ## Code
 

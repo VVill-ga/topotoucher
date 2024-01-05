@@ -271,7 +271,7 @@ MulArray3(float factor, float a, float b, float c )
 
 // these are here for when you need them -- just uncomment the ones you need:
 
-//#include "setmaterial.cpp"
+#include "setmaterial.cpp"
 #include "setlight.cpp"
 #include "osusphere.cpp"
 //#include "osucone.cpp"
@@ -445,48 +445,90 @@ Display( )
 	glEnable( GL_LIGHTING );
 	glEnable( GL_LIGHT0 );
 
-	glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3(0.8f, WHITE));
+	//glLightModelfv( GL_LIGHT_MODEL_AMBIENT, MulArray3(0.8f, WHITE));
 
-	SetSunLight(GL_LIGHT0, cos(Time*F_2_PI), 2.f, sin(Time*F_2_PI), 1.f, 1.f, 1.f);
+	SetSunLight(GL_LIGHT0, cos(Time*F_2_PI), 1.f, sin(Time*F_2_PI), 1.f, 1.f, 1.f);
 	
 	// draw the terrain:
-	// TODO: Move this code to a fragment shader.
+	
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// TODO: Move this code to a shader.
 
+	glEnable( GL_NORMALIZE );
 	GLuint TerrainList = glGenLists(1);
 	glNewList(TerrainList, GL_COMPILE);
 	// i is row number, j is col number
+
+	//Vertexes used:
+	//   T
+	// L H R  | First goes down one inside loops, then loop moves right one.
+	//   B    V
+	//
+	// Makes triangles  |\--|  Like that!
+	//				    | \ |  -> -> ->
+	//					---\|
 
 	// Resolution-1 because strip does 2 rows at a time
 	for(float i = 0.; i < Resolution-1; i++){
 		glBegin(GL_TRIANGLE_STRIP);
 		for(float j = 0.; j < Resolution; j++){
-		float h = Heights[(int)((i*Resolution) + j)]/(float)HeightResolution;
-		if(h < 0.5f)
-			glColor3f(0.0f, 0.5f, 0.0f);
-		else if(h < 0.8f)
-			glColor3f(0.6f, 0.6f, 0.6f);
-		else
-			glColor3f(1.0f, 1.0f, 1.0f);
-		glVertex3f(4.*(i/((float)Resolution-1.)) - 2., h, 4.*(j/((float)Resolution-1.)) - 2.);
+			float h = Heights[(int)((i*Resolution) + j)]/(float)HeightResolution;
+			float r,l,t,b;
+			if(h < -0.5f)
+				SetMaterial(0.4f, 0.3f, 0.1f, 1.);
+			else if(h < 0.0f)
+				SetMaterial(0.7f, 0.4f, 0.0f, 1.);
+			else if(h < 0.5f)
+				SetMaterial(0.0f, 0.5f, 0.0f, 8.);
+			else if(h < 0.8f)
+				SetMaterial(0.6f, 0.6f, 0.6f, 5.);
+			else
+				SetMaterial(1.0f, 1.0f, 1.0f, 2.);
+			if(i > 0 && i < Resolution-1 && j > 0 && j < Resolution-1){
+				r = Heights[(int)(((i+1)*Resolution) + j)]/(float)HeightResolution;
+				l = Heights[(int)(((i-1)*Resolution) + j)]/(float)HeightResolution;
+				t = Heights[(int)((i*Resolution) + (j-1))]/(float)HeightResolution;
+				b = Heights[(int)((i*Resolution) + (j+1))]/(float)HeightResolution;
+				glNormal3f(2*(r-l), 1, 2*(b-t));
 
-		i++;
+			}else
+				glNormal3f(0,1.,0);
+			glVertex3f(4.*(i/((float)Resolution-1.)) - 2., h, 4.*(j/((float)Resolution-1.)) - 2.);
 
-		h = Heights[(int)((i*Resolution) + j)]/(float)HeightResolution;
-		if(h < 0.5f)
-			glColor3f(0.0f, 0.5f, 0.0f);
-		else if(h < 0.8f)
-			glColor3f(0.6f, 0.6f, 0.6f);
-		else
-			glColor3f(1.0f, 1.0f, 1.0f);
-		glVertex3f(4.*(i/((float)Resolution-1.)) - 2., h, 4.*(j/((float)Resolution-1.)) - 2.);
 
-		i--;
+			i++;
+
+			// L and H are already calculated
+			l = h;
+			h = r;
+			if(h < -0.5f)
+				SetMaterial(0.4f, 0.3f, 0.1f, 1.);
+			else if(h < 0.0f)
+				SetMaterial(0.7f, 0.4f, 0.0f, 1.);
+			else if(h < 0.5f)
+				SetMaterial(0.0f, 0.5f, 0.0f, 8.);
+			else if(h < 0.8f)
+				SetMaterial(0.6f, 0.6f, 0.6f, 5.);
+			else
+				SetMaterial(1.0f, 1.0f, 1.0f, 2.);
+			if(i > 0 && i < Resolution-1 && j > 0 && j < Resolution-1){
+				r = Heights[(int)(((i+1)*Resolution) + j)]/(float)HeightResolution;
+				t = Heights[(int)((i*Resolution) + (j-1))]/(float)HeightResolution;
+				b = Heights[(int)((i*Resolution) + (j+1))]/(float)HeightResolution;
+				glNormal3f(2*(r-l), 1, 2*(b-t));
+			}else
+				glNormal3f(0,1.,0);
+			glVertex3f(4.*(i/((float)Resolution-1.)) - 2., h, 4.*(j/((float)Resolution-1.)) - 2.);
+
+			i--;
 		}
 		glEnd();
 	}
 	glEndList();
+	SetMaterial(1.f, 0.8f, 0.0f, 5.);
 
 	glCallList(TerrainList);
+	glDeleteLists(TerrainList, 1);
 
   	int i = CurrentIndex/Resolution;
   	int j = CurrentIndex%Resolution;
@@ -513,16 +555,16 @@ Display( )
 		DoRasterString( 0.f, 1.f, -2.f, (char *)"K" );
 		DoRasterString( 2.f, 1.f, 0.f, (char *)"L" );
 		DoRasterString( 0.f, 1.f, 0.f, (char *)"W/S" );
-
-		glDisable( GL_DEPTH_TEST );
-		glMatrixMode( GL_PROJECTION );
-		glLoadIdentity( );
-		gluOrtho2D( 0.f, 100.f,     0.f, 100.f );
-		glMatrixMode( GL_MODELVIEW );
-		glLoadIdentity( );
-		glColor3f( 1.f, 1.f, 1.f );
-		DoRasterString( 5.f, 5.f, 0.f, Rolloff_Strings[Rolloff] );
 	}
+
+	glDisable( GL_DEPTH_TEST );
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity( );
+	gluOrtho2D( 0.f, 100.f,     0.f, 100.f );
+	glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity( );
+	glColor3f( 1.f, 1.f, 1.f );
+	DoRasterString( 5.f, 5.f, 0.f, Rolloff_Strings[Rolloff] );
 
 	// swap the double-buffered framebuffers:
 	glutSwapBuffers( );
