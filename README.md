@@ -75,10 +75,10 @@ position, and all values above
 
 ### Rolloff Functions
 
-<iframe src="https://www.desmos.com/calculator/wtvw4yahfq?embed" width="500" height="500" style="border: 1px solid #ccc" frameborder=0></iframe>
+[<img src="desmos.png">](https://www.desmos.com/calculator/wtvw4yahfq)
 
-An interactive visualization of the currently implemented falloff equations is 
-shown above. You can go directly to the Desmos graph by clicking 
+An image of the currently implemented falloff equations is shown above. You 
+can go directly to the interactive Desmos graph by clicking on the image or
 [here](https://www.desmos.com/calculator/wtvw4yahfq). The x value 
 represents the radius from the currently selected vertex, and the y value
 represents the value to be added/subtracted from that vertex.
