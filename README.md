@@ -6,9 +6,9 @@ written by [Mike Bailey](https://web.engr.oregonstate.edu/~mjb).
 
 ## Gallary
 
-<img src="readme_img/gallary1.png" width="33%">
-<img src="readme_img/gallary2.png" width="33%">
-<img src="readme_img/gallary3.png" width="33%">
+<img src="readme_img/gallary1.png" width="30%">
+<img src="readme_img/gallary2.png" width="30%">
+<img src="readme_img/gallary3.png" width="30%">
 
 ## Building
 
